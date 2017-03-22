@@ -1,0 +1,1 @@
+websocketd.exe -port=8080 powershell -nologo -sta -noprofile -file monitor.ps1
