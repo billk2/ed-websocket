@@ -20,7 +20,7 @@ Register-ObjectEvent $Watcher Created -SourceIdentifier FileCreated -Action {
  Get-Content $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
  $global:fileLengthLast = $lines.Lines
-}
+} | Out-Null
 
 
 while ($global:FileCreated -ne $true){
@@ -35,7 +35,7 @@ Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
    $global:fileLengthLast = $lines.Lines
    $global:FileChanged = $true
  }
-}
+} | Out-Null
 
 
 while ($true) {
