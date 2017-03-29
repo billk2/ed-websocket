@@ -1,6 +1,7 @@
 Unregister-Event -SourceIdentifier FileChanged
 
 #Write-Host "monitor.ps1"
+# test git
 
 $dir = "C:\Users\$env:UserName\Saved Games\Frontier Developments\Elite Dangerous"
 #$dir = "F:\" #debug
