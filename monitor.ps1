@@ -32,8 +32,8 @@ Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
    $global:fileLengthLast = $lines.Lines
 #   Write-Host "changed fileLengthLast: $global:fileLengthLast"
    $global:FileChanged = $true
- # }
-  } | Add-Content $temp
+  }
+  # } | Add-Content $temp
 }
 
 
