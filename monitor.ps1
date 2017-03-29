@@ -1,46 +1,50 @@
-Unregister-Event -SourceIdentifier FileCreated
 Unregister-Event -SourceIdentifier FileChanged
 
+#Write-Host "monitor.ps1"
 
-$dir = "C:\Users\bill\Saved Games\Frontier Developments\Elite Dangerous"
+$dir = "C:\Users\$env:UserName\Saved Games\Frontier Developments\Elite Dangerous"
+#$dir = "F:\" #debug
+#$dir = "\\vboxsrv\journals"
 $filter = "*.log"
-$global:FileCreated = $false
+$global:FileChanged = $false
+$global:fileLengthLast = 0
+
+
+#$dir = "C:\Users\IEUser\logs" # debug
+#$filter = "*.txt" #debug
+
 
 $Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
   IncludeSubdirectories = $false;
   NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'
 }
 
+Write-Host $dir
 
-Register-ObjectEvent $Watcher Created -SourceIdentifier FileCreated -Action {
- $global:FileCreated = $true
- $global:FileChanged = $true
- $latestLog = $Event.SourceEventArgs.Name
- $global:fullPath = "$dir\$latestLog"
- Get-Content $global:fullPath
- $lines = Get-Content $global:fullPath | Measure-Object -Line
- $global:fileLengthLast = $lines.Lines
-} | Out-Null
-
-
-while ($global:FileCreated -ne $true){
-  sleep -Sec 5
-}
 
 
 Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
+ $latestLog = $Event.SourceEventArgs.Name
+ $global:fullPath = "$dir\$latestLog"
+ Write-Host $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
  if ($lines.Lines -ne $global:fileLengthLast) {
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
+#   Write-Host "changed lines: $global:fileLengthChange"
    $global:fileLengthLast = $lines.Lines
+#   Write-Host "changed fileLengthLast: $global:fileLengthLast"
    $global:FileChanged = $true
  }
-} | Out-Null
+# } | Out-Null
+}
 
 
 while ($true) {
-  while ($global:FileChanged -eq $true){
-    $global:FileChanged = $false
-    Get-Content $global:fullPath | Select-Object -Last $global:fileLengthChange
-  }
+
+    while ($global:FileChanged -eq $true){
+      $global:FileChanged = $false
+      Get-Content $global:fullPath | Select-Object -Last $global:fileLengthChange
+      Write-Host "fileLengthChange: $global:fileLengthChange"
+    }
+
 }
