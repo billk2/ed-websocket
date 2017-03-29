@@ -7,46 +7,34 @@ $dir = "C:\Users\IEUser\Saved Games\Frontier Developments\Elite Dangerous"
 #$dir = "F:\" #debug
 #$dir = "\\vboxsrv\journals"
 $filter = "*.log"
-$global:FileChanged = $false
-$global:fileLengthLast = 0
 
-
-#$dir = "C:\Users\IEUser\logs" # debug
-#$filter = "*.txt" #debug
-
-
-$Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
-  IncludeSubdirectories = $false;
-  NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'
+$MutexName = "Global\ReadFile"
+$MutexWasCreated = $false;
+try {
+    $Mutex = [System.Threading.Mutex]::OpenExisting($MutexName);
+} catch {
+    $Mutex = New-Object System.Threading.Mutex($false,$MutexName,[ref]$MutexWasCreated);
 }
 
-#Write-Host $dir
+$watcher = New-Object System.IO.FileSystemWatcher -Property @{Path = $dir;
+                                                              Filter = $filter;
+                                                              NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'}
 
 
+Register-ObjectEvent -InputObject $watcher -EventName Changed -SourceIdentifier FileCreated #-Action $CreatedActions
 
-Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
- $latestLog = $Event.SourceEventArgs.Name
- $global:fullPath = "$dir\$latestLog"
-# Write-Host $global:fullPath
- $lines = Get-Content $global:fullPath | Measure-Object -Line
- if ($lines.Lines -ne $global:fileLengthLast) {
-   $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
-#   Write-Host "changed lines: $global:fileLengthChange"
-   $global:fileLengthLast = $lines.Lines
-#   Write-Host "changed fileLengthLast: $global:fileLengthLast"
-   $global:FileChanged = $true
- }
-# } | Out-Null
-}
+while ($true){  
+    $events = @(Get-Event -SourceIdentifier FileCreated -ErrorAction SilentlyContinue )
+    foreach($event in $events) {
+        $Mutex.WaitOne() | Out-Null
+        try {
+            Get-Content $event.sourceEventArgs.FullPath -ReadCount 0 | Write-Host
+        } catch {
+            Write-Host $_
+        }
+        $Mutex.ReleaseMutex() | Out-Null
 
-
-while ($true) {
-
-    while ($global:FileChanged -eq $true){
-      $global:FileChanged = $false
-      Get-Content $global:fullPath | Select-Object -Last $global:fileLengthChange
-      Write-Host "fileLengthChange: $global:fileLengthChange"
-      #Write-Host "debug"
+        Remove-Event -EventIdentifier $event.EventIdentifier
     }
-
+    $null = Wait-Event -SourceIdentifier FileCreated
 }
