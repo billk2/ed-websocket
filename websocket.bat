@@ -1,1 +1,1 @@
-websocketd.exe -port=8080 powershell -nologo -sta -noprofile -file monitor.ps1
+websocketd.exe -port=3306 --devconsole powershell -nologo -sta -noprofile -file monitor.ps1

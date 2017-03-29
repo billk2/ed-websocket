@@ -3,7 +3,7 @@ Unregister-Event -SourceIdentifier FileChanged
 #Write-Host "monitor.ps1"
 # test git 2
 
-$dir = "C:\Users\$env:UserName\Saved Games\Frontier Developments\Elite Dangerous"
+$dir = "C:\Users\IEUser\Saved Games\Frontier Developments\Elite Dangerous"
 #$dir = "F:\" #debug
 #$dir = "\\vboxsrv\journals"
 $filter = "*.log"
@@ -20,14 +20,14 @@ $Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
   NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'
 }
 
-Write-Host $dir
+#Write-Host $dir
 
 
 
 Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
- Write-Host $global:fullPath
+# Write-Host $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
  if ($lines.Lines -ne $global:fileLengthLast) {
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
@@ -46,6 +46,7 @@ while ($true) {
       $global:FileChanged = $false
       Get-Content $global:fullPath | Select-Object -Last $global:fileLengthChange
       Write-Host "fileLengthChange: $global:fileLengthChange"
+      #Write-Host "debug"
     }
 
 }
