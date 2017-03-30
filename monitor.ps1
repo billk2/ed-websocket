@@ -1,5 +1,11 @@
 Unregister-Event -SourceIdentifier FileChanged
 
+param {
+  [string]$username
+}
+
+Write-Host $username
+
 $dir = "C:\Users\IEUser\Saved Games\Frontier Developments\Elite Dangerous"
 $filter = "*.log"
 $global:FileChanged = $false
