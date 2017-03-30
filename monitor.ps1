@@ -1,12 +1,9 @@
+param([string]$username = "test")
+
 Unregister-Event -SourceIdentifier FileChanged
 
-param {
-  [string]$username
-}
 
-Write-Host $username
-
-$dir = "C:\Users\IEUser\Saved Games\Frontier Developments\Elite Dangerous"
+$dir = "C:\Users\$username\Saved Games\Frontier Developments\Elite Dangerous"
 $filter = "*.log"
 $global:FileChanged = $false
 $global:fileLengthLast = 0
@@ -23,7 +20,7 @@ $Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
   NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'
 }
 
-#Write-Host $dir
+# Write-Host $dir
 
 
 
