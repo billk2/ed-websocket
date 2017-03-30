@@ -1,4 +1,4 @@
-param([string]$username = "test")
+param([string]$username = "bill")
 
 Unregister-Event -SourceIdentifier FileChanged
 
@@ -7,14 +7,15 @@ $filter = "*.log"
 $global:FileChanged = $false
 $global:fileLengthLast = 0
 
-$Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
-  IncludeSubdirectories = $false;
-  NotifyFilter = [IO.NotifyFilters]'FileName,LastWrite'
-  EnableRaisingEvents = $true  
-}
+$Watcher = New-Object IO.FileSystemWatcher
+$Watcher.path = $dir
+$Watcher.filter = $filter
+$Watcher.IncludeSubdirectories = $false
+$Watcher.EnableRaisingEvents = $true
+$Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size'
 
-Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
-
+$action = {
+Write-Host "Change"
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
  $lines = Get-Content $global:fullPath | Measure-Object -Line
@@ -31,6 +32,7 @@ Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
   }
 }
 
+Register-ObjectEvent $Watcher "Changed" -SourceIdentifier FileChanged -Action $action
 
 while ($true) {
 
