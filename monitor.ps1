@@ -9,7 +9,8 @@ $global:fileLengthLast = 0
 
 $Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
   IncludeSubdirectories = $false;
-  NotifyFilter = [System.IO.NotifyFilters]'FileName,LastWrite'
+  NotifyFilter = [IO.NotifyFilters]'FileName,LastWrite'
+  EnableRaisingEvents = $true  
 }
 
 Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
