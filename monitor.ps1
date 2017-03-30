@@ -27,16 +27,17 @@ $Watcher = New-Object IO.FileSystemWatcher $dir, $filter -Property @{
 Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
-# Write-Host $global:fullPath
+ #Write-Host $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
+# Write-Host $lines.Lines
  if ($lines.Lines -ne $global:fileLengthLast) {
    if ($lines.Lines -lt $global:fileLengthLast) {
      $global:fileLengthLast = 0
    }
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
-   # Write-Host "changed lines: $global:fileLengthChange"
+ #  Write-Host "changed lines: $global:fileLengthChange"
    $global:fileLengthLast = $lines.Lines
-   # Write-Host "changed fileLengthLast: $global:fileLengthLast"
+  # Write-Host "changed fileLengthLast: $global:fileLengthLast"
    $global:FileChanged = $true
   }
   # } | Add-Content $temp
@@ -47,8 +48,9 @@ while ($true) {
 
     while ($global:FileChanged -eq $true){
       $global:FileChanged = $false
-      Get-Content $global:fullPath | Select-Object -Last $global:fileLengthChange
-      Write-Host "fileLengthChange: $global:fileLengthChange"
+   #   Write-Host $global:fullPath
+      Get-Content $global:fullPath -Tail $global:fileLengthChange
+    #  Write-Host "fileLengthChange: $global:fileLengthChange"
       #Write-Host "debug"
     }
 
