@@ -30,10 +30,13 @@ Register-ObjectEvent $Watcher Changed -SourceIdentifier FileChanged -Action {
 # Write-Host $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
  if ($lines.Lines -ne $global:fileLengthLast) {
+   if ($lines.Lines -lt $global:fileLengthLast) {
+     $global:fileLengthLast = 0
+   }
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
-#   Write-Host "changed lines: $global:fileLengthChange"
+   # Write-Host "changed lines: $global:fileLengthChange"
    $global:fileLengthLast = $lines.Lines
-#   Write-Host "changed fileLengthLast: $global:fileLengthLast"
+   # Write-Host "changed fileLengthLast: $global:fileLengthLast"
    $global:FileChanged = $true
   }
   # } | Add-Content $temp
