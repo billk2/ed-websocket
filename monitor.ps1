@@ -38,6 +38,7 @@ while ($true) {
 
   while ($global:FileChanged -eq $true){
     $global:FileChanged = $false
-    Get-Content $global:fullPath -Tail $global:fileLengthChange
+    # Get-Content $global:fullPath -Tail $global:fileLengthChange
+    Get-Content $global:fullPath -Wait
   }
 }
