@@ -12,10 +12,9 @@ $Watcher.path = $dir
 $Watcher.filter = $filter
 $Watcher.IncludeSubdirectories = $false
 $Watcher.EnableRaisingEvents = $true
-$Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size'
+$Watcher.NotifyFilter = [System.IO.NotifyFilters]'LastWrite'
 
 $action = {
-Write-Host "Change"
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
  $lines = Get-Content $global:fullPath | Measure-Object -Line
