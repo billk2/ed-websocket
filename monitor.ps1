@@ -1,8 +1,7 @@
-param([string]$username = "bill")
+param([string]$dir = "C:\Users\bill\Saved Games\Frontier Developments\Elite Dangerous")
 
 Unregister-Event -SourceIdentifier FileChanged
 
-$dir = "C:\Users\$username\Saved Games\Frontier Developments\Elite Dangerous"
 $filter = "*.log"
 $global:FileChanged = $false
 $global:fileLengthLast = 0
