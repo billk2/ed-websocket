@@ -40,7 +40,7 @@ while ($true) {
   while ($global:fileChanged -eq $true){
     Write-Host "Changed"
     $global:fileChanged = $false
-    Get-Content $global:fullPath -Tail $global:fileLengthChange
-    # Get-Content $global:fullPath -Wait
+    # Get-Content $global:fullPath -Tail $global:fileLengthChange
+    Get-Content $global:fullPath -Wait
   }
 }
