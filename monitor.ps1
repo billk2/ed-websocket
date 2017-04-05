@@ -11,9 +11,10 @@ $Watcher.path = $dir
 $Watcher.filter = $filter
 $Watcher.IncludeSubdirectories = $false
 $Watcher.EnableRaisingEvents = $true
-$Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size, FileName, LastWrite'
+# $Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size, FileName, LastWrite'
+$Watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite
 Write-Host $dir
-# 
+
 $action = {
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
