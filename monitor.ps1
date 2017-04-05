@@ -2,7 +2,7 @@ param([string]$dir = "C:\Users\bill\Saved Games\Frontier Developments\Elite Dang
 
 Unregister-Event -SourceIdentifier FileChanged
 
-$filter = "*.log"
+$filter = "Journal.*.log"
 $global:FileChanged = $false
 $global:fileLengthLast = 0
 
@@ -11,7 +11,7 @@ $Watcher.path = $dir
 $Watcher.filter = $filter
 $Watcher.IncludeSubdirectories = $false
 $Watcher.EnableRaisingEvents = $true
-$Watcher.NotifyFilter = [System.IO.NotifyFilters]'LastWrite'
+# $Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size, FileName, LastWrite'
 
 $action = {
  $latestLog = $Event.SourceEventArgs.Name
