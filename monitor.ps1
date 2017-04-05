@@ -12,10 +12,13 @@ $Watcher.filter = $filter
 $Watcher.IncludeSubdirectories = $false
 $Watcher.EnableRaisingEvents = $true
 # $Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size, FileName, LastWrite'
+Write-Host $dir
 
 $action = {
+ Write-Host $dir
  $latestLog = $Event.SourceEventArgs.Name
  $global:fullPath = "$dir\$latestLog"
+ Write-Host $global:fullPath
  $lines = Get-Content $global:fullPath | Measure-Object -Line
 
  if ($lines.Lines -ne $global:fileLengthLast) {
@@ -23,7 +26,7 @@ $action = {
    if ($lines.Lines -lt $global:fileLengthLast) {
      $global:fileLengthLast = 0
    }
-
+   Write-Host "Changing"
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
    $global:fileLengthLast = $lines.Lines
    $global:fileChanged = $true
@@ -35,8 +38,9 @@ Register-ObjectEvent $Watcher "Changed" -SourceIdentifier FileChanged -Action $a
 while ($true) {
 
   while ($global:fileChanged -eq $true){
+    Write-Host "Changed"
     $global:fileChanged = $false
-    # Get-Content $global:fullPath -Tail $global:fileLengthChange
-    Get-Content $global:fullPath -Wait
+    Get-Content $global:fullPath -Tail $global:fileLengthChange
+    # Get-Content $global:fullPath -Wait
   }
 }
