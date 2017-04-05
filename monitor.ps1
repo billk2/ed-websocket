@@ -12,7 +12,7 @@ $Watcher.filter = $filter
 $Watcher.IncludeSubdirectories = $false
 $Watcher.EnableRaisingEvents = $true
 # $Watcher.NotifyFilter = [System.IO.NotifyFilters]'Size, FileName, LastWrite'
-$Watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite
+$Watcher.NotifyFilter = [System.IO.NotifyFilters]::Size
 Write-Host $dir
 
 $action = {
