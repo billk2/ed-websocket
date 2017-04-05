@@ -3,7 +3,7 @@ param([string]$dir = "C:\Users\bill\Saved Games\Frontier Developments\Elite Dang
 Unregister-Event -SourceIdentifier FileChanged
 
 $filter = "Journal.*.log"
-$global:FileChanged = $false
+$global:fileChanged = $false
 $global:fileLengthLast = 0
 
 $Watcher = New-Object IO.FileSystemWatcher
@@ -26,7 +26,7 @@ $action = {
 
    $global:fileLengthChange = $lines.Lines - $global:fileLengthLast
    $global:fileLengthLast = $lines.Lines
-   $global:FileChanged = $true
+   $global:fileChanged = $true
   }
 }
 
@@ -34,8 +34,8 @@ Register-ObjectEvent $Watcher "Changed" -SourceIdentifier FileChanged -Action $a
 
 while ($true) {
 
-  while ($global:FileChanged -eq $true){
-    $global:FileChanged = $false
+  while ($global:fileChanged -eq $true){
+    $global:fileChanged = $false
     # Get-Content $global:fullPath -Tail $global:fileLengthChange
     Get-Content $global:fullPath -Wait
   }
