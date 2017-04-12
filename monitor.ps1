@@ -40,7 +40,7 @@ while ($true) {
   while ($global:fileChanged -eq $true){
     Write-Host "Changed"
     Write-Host $global:fullPath
-    Write-Host "{'warning': ['Logging journal to $global:fullPath']}"
+    Write-Host "{""warning"": [""Logging journal to $global:fullPath""]}"
     $global:fileChanged = $false
     # Get-Content $global:fullPath -Tail $global:fileLengthChange
     Get-Content $global:fullPath -Wait
